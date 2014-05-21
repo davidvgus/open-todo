@@ -17,12 +17,15 @@ class Api::UsersController < ApiController
   end
 
   def create
-    @user = User.new(user_params)
+    @new_user = User.new(user_params)
 
-    if @user.save
-      redirect_to @user, notice: 'User was successfully created.'
+    if @new_user.save
+      respond_with @new_user do |format|
+        #format.json { render json: @user.to_json }
+        format.json { render json: UserSerializer.new(@new_user).to_json }
+      end
     else
-      render action: 'new'
+      render json: 'wtf?!!BBQ!'
     end
   end
 
@@ -46,6 +49,6 @@ class Api::UsersController < ApiController
   end
 
   def user_params
-    params.require(:user).permit(:username, :password)
+    params.require(:new_user).permit(:username, :password)
   end
 end

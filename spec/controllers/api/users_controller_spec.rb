@@ -9,36 +9,42 @@ describe Api::UsersController do
   describe "create" do
     it "creates and returns a new user from username and password params" do
       params = { 'new_user' => { 'username' => 'testuser', 'password' => 'testpass' } }
+      request.headers["CONTENT_TYPE"] = "application/json"
+      request.headers["ACCEPT"] = "application/json"
 
-      expect{ post :create, params }
-        .to change{ User.where(params['new_user']).count }
-        .by 1
+      p params
+      p params.to_json
+
+      expect{ post :create, params }.to change{ User.where(params['user']).count }.by 1
 
       JSON.parse(response.body).should == params['new_user']
     end
 
     it "returns an error when not given a username" do
-      post :create, { username: 'testuser' }
+      pending
+      post :create, { password: 'testpass' }
       response.should be_error
     end
 
     it "returns an error when not given a password" do
-      post :create, { password: 'testpass' }
+      pending
+      post :create, { username: 'testname' }
       response.should be_error
     end
   end
 
   describe "index" do
 
-    before do 
+    before do
+      pending
       (1..3).each{ |n| User.create( id: n, username: "name#{n}", password: "pass#{n}" ) }
     end
 
     it "lists all usernames and ids" do
       get :index
 
-      JSON.parse(response.body).should == 
-        { 'users' => 
+      JSON.parse(response.body).should ==
+        { 'users' =>
           [
             { 'id' => 1, 'username' => 'name1' },
             { 'id' => 2, 'username' => 'name2' },
