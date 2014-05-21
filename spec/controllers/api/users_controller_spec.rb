@@ -17,7 +17,7 @@ describe Api::UsersController do
 
       expect{ post :create, params }.to change{ User.where(params['user']).count }.by 1
 
-      JSON.parse(response.body).should == params['new_user']
+      JSON.parse(response.body).should == params
     end
 
     it "returns an error when not given a username" do
