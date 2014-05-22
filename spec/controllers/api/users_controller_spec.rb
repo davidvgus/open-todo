@@ -12,23 +12,23 @@ describe Api::UsersController do
       request.headers["CONTENT_TYPE"] = "application/json"
       request.headers["ACCEPT"] = "application/json"
 
-      p params
-      p params.to_json
-
       expect{ post :create, params }.to change{ User.where(params['user']).count }.by 1
 
       JSON.parse(response.body).should == params
     end
 
     it "returns an error when not given a username" do
-      pending
-      post :create, { password: 'testpass' }
+      params = { 'new_user' => { 'password' => 'testpass' } }
+      request.headers["CONTENT_TYPE"] = "application/json"
+      request.headers["ACCEPT"] = "application/json"
+
+      post :create, params
       response.should be_error
     end
 
     it "returns an error when not given a password" do
       pending
-      post :create, { username: 'testname' }
+      post :create, {new_user: { username: 'testname' }}
       response.should be_error
     end
   end

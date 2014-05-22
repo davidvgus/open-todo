@@ -21,11 +21,11 @@ class Api::UsersController < ApiController
 
     if @new_user.save
       respond_with @new_user do |format|
-        #format.json { render json: @user.to_json }
         format.json { render json: NewUserSerializer.new(@new_user).to_json }
       end
     else
-      render json: 'wtf?!!BBQ!'
+      message = "User was not created"
+      error(422, message)
     end
   end
 
