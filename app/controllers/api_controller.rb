@@ -19,9 +19,10 @@ class ApiController < ActionController::Base
     }
 
 
-    respond_to do |format|
-      format.json {render json: response.to_json, status: status}
-    end
+    #respond_to do |format|
+      #format.json {render json: response.to_json, status: status}
+    #end
+    render json: response.to_json, status: status
   end
 
 end

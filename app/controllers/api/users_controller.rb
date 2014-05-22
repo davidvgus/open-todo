@@ -3,6 +3,8 @@ class Api::UsersController < ApiController
 
   def index
     @users = User.all
+    #render json: NewUserSerializer.new(@new_user).to_json
+    render json: @users, each_serializer: UserSerializer
   end
 
   def show
@@ -20,9 +22,10 @@ class Api::UsersController < ApiController
     @new_user = User.new(user_params)
 
     if @new_user.save
-      respond_with @new_user do |format|
-        format.json { render json: NewUserSerializer.new(@new_user).to_json }
-      end
+      #respond_with @new_user do |format|
+        #format.json { render json: NewUserSerializer.new(@new_user).to_json }
+      #end
+      render json: NewUserSerializer.new(@new_user).to_json
     else
       message = "User was not created"
       error(500, message)
