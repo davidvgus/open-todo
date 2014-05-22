@@ -32,5 +32,6 @@ module Todo
       g.javascripts = false
       g.template_engine :haml
     end
+    config.i18n.enforce_available_locales = false
   end
 end
