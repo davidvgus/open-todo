@@ -25,7 +25,7 @@ class Api::UsersController < ApiController
       end
     else
       message = "User was not created"
-      error(422, message)
+      error(500, message)
     end
   end
 

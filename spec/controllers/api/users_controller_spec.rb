@@ -22,7 +22,9 @@ describe Api::UsersController do
       request.headers["CONTENT_TYPE"] = "application/json"
       request.headers["ACCEPT"] = "application/json"
 
+
       post :create, params
+
       response.should be_error
     end
 
