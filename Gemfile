@@ -19,11 +19,10 @@ group :development, :test do
   gem 'pry'
   gem 'binding_of_caller'
   gem 'factory_girl_rails'
+  gem 'rspec-rails', '~> 3.0.0.beta'
 end
 
 group :test do
-  gem 'rspec-rails'
-  gem 'rspec'
 end
 
 # Use Uglifier as compressor for JavaScript assets
