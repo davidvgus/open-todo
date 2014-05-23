@@ -30,8 +30,7 @@ class Api::UsersController < ApiController
   end
 
   def destroy
-    @user.destroy
-    redirect_to users_url
+    render json: {"fromdestroy" => "response_from_destroy"}.to_json
   end
 
   private

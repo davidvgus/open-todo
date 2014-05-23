@@ -52,4 +52,13 @@ describe Api::UsersController do
         })
     end
   end
+
+  describe "destroy" do
+    user = FactoryGirl.create(:user)
+    params = {id: user.id}
+    delete :destroy, params
+
+    #expect(JSON.parse(response.body)).to eql( {'id' => user.id} )
+  end
+
 end
