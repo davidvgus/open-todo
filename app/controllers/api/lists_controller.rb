@@ -6,13 +6,6 @@ class Api::ListsController < ApiController
     @items = @list.items.completed
   end
 
-  def new
-    @list = List.new
-  end
-
-  def edit
-  end
-
   def index
     @lists = @user.lists
   end

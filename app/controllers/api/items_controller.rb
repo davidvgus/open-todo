@@ -11,10 +11,6 @@ class Api::ItemsController < ApiController
     end
   end
 
-  def new
-    @item = Item.new
-  end
-
   def destroy
     @item.mark_complete
     redirect_to user_list_path(@list.user, @list)
