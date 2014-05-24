@@ -54,11 +54,16 @@ describe Api::UsersController do
   end
 
   describe "destroy" do
-    user = FactoryGirl.create(:user)
-    params = {id: user.id}
-    delete :destroy, params
+  #describe "destroy", :type => :request do
+    it "deletes and returns the user" do
 
-    #expect(JSON.parse(response.body)).to eql( {'id' => user.id} )
+      user = FactoryGirl.create(:user)
+      user_hash = {"id" => user.id, "username" => user.username, "password" => user.password}
+      delete :destroy, {id: user.id}
+
+      returned_deleted_user = JSON.parse(response.body)["deleted_user"]
+      expect(returned_deleted_user).to eql( user_hash )
+    end
   end
 
 end

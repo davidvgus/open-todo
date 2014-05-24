@@ -7,7 +7,7 @@ class Api::UsersController < ApiController
   end
 
   def show
-    @lists = @user.lists
+    #@lists = @user.lists
   end
 
   def create
@@ -22,15 +22,16 @@ class Api::UsersController < ApiController
   end
 
   def update
-    if @user.update(user_params)
-      redirect_to @user, notice: 'User was successfully updated.'
-    else
-      render action: 'edit'
-    end
+    #if @user.update(user_params)
+      #redirect_to @user, notice: 'User was successfully updated.'
+    #else
+      #render action: 'edit'
+    #end
   end
 
   def destroy
-    render json: {"fromdestroy" => "response_from_destroy"}.to_json
+    @user.destroy
+    render json: DeletedUserSerializer.new(@user).to_json
   end
 
   private
