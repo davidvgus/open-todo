@@ -7,7 +7,7 @@ class Api::UsersController < ApiController
   end
 
   def show
-    #@lists = @user.lists
+    render json: UserSerializer.new(@user).to_json
   end
 
   def create
