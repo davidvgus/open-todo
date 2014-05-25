@@ -2,8 +2,8 @@ class Api::UsersController < ApiController
   before_action :set_user, only: [:show, :update, :destroy]
 
   def index
-    @users = User.all
-    render json: @users, each_serializer: UserSerializer
+    users = User.all
+    render json: users, each_serializer: UserSerializer
   end
 
   def show
@@ -11,10 +11,10 @@ class Api::UsersController < ApiController
   end
 
   def create
-    @new_user = User.new(user_params)
+    new_user = User.new(user_params)
 
-    if @new_user.save
-      render json: UserSerializer.new(@new_user).to_json
+    if new_user.save
+      render json: UserSerializer.new(new_user).to_json
     else
       message = "User was not created"
       error(500, message)
