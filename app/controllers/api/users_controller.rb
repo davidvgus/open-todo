@@ -1,9 +1,10 @@
 class Api::UsersController < ApiController
   before_action :set_user, only: [:show, :update, :destroy]
+  before_action :check_auth
 
   def index
     users = User.all
-    render json: users, each_serializer: UserSerializer
+    render json: users, each_serializer: IndexUserSerializer
   end
 
   def show
@@ -44,4 +45,13 @@ class Api::UsersController < ApiController
   def user_params
     params.require(:user).permit(:username, :password)
   end
+
+  #def authenticated?
+    #authenticate_with_http_basic {|u, p| User.where( username: u, password: p).present? }
+  #end
+
+  #def check_auth
+    #return permission_denied_error unless authenticated?
+  #end
+
 end

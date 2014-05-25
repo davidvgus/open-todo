@@ -15,4 +15,5 @@
 /log/*.log
 /tmp
 
-.curl
+.curl*
+/bin/c*
