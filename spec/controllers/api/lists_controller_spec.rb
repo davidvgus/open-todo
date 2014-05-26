@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Api::ListsController do
+
+  before do
+    List.destroy_all
+  end
+
   describe "create" do
 
     xit "requires authentication" do
@@ -34,17 +39,50 @@ describe Api::ListsController do
       end
 
       it "but without user_id returns VIEWABLE lists " do
+        ids = []
         3.times do |n|
           FactoryGirl.create(:list, permissions: "#{%w{ private, open}.sample}", name: "private or open#{n}")
-          FactoryGirl.create(:list, permissions: "viewable", name: "viewable list desc.#{n}")
+          viewable = FactoryGirl.create(:list, permissions: "viewable", name: "viewable list desc#{n}")
+          ids << viewable.id
         end
         get :index
         expect(JSON.parse(response.body)).to eql(
-          {"something" => "somethingelse"}
+          {"lists" =>
+            [
+              {"id"=>ids[0], "name"=>"viewable list desc0"},
+              {"id"=>ids[1], "name"=>"viewable list desc1"},
+              {"id"=>ids[2], "name"=>"viewable list desc2"}
+            ]
+          }
         )
       end
 
-      xit "with user_id returns all visible and open lists"
+      it "with user_id returns all visible and open lists" do
+        view_ids = []
+        open_ids = []
+        private_ids = []
+        user = FactoryGirl.create(:user)
+        2.times do |n|
+          private_list = FactoryGirl.create(:list, user: user, permissions: "private", name: "private list desc#{n}")
+          FactoryGirl.create(:list, permissions: "private", name: "private list desc#{n}")
+          open_list = FactoryGirl.create(:list, permissions: "open", name: "open list desc#{n}")
+          viewable_list = FactoryGirl.create(:list, permissions: "viewable", name: "viewable list desc#{n}")
+          private_ids << private_list.id
+          view_ids << viewable_list.id
+          open_ids << open_list.id
+        end
+
+        get :index, :user_id => user.id
+        expect(JSON.parse(response.body)).to eql(
+          {"lists" =>
+            [
+              {"id"=>private_ids[0], "name"=>"viewable list desc0"},
+              {"id"=>view_ids[1], "name"=>"viewable list desc1"},
+              {"id"=>open_ids[2], "name"=>"viewable list desc2"}
+            ]
+          }
+        )
+      end
     end
   end
 end
