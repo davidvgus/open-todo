@@ -63,24 +63,28 @@ describe Api::ListsController do
         private_ids = []
         user = FactoryGirl.create(:user)
         2.times do |n|
-          private_list = FactoryGirl.create(:list, user: user, permissions: "private", name: "private list desc#{n}")
+
           FactoryGirl.create(:list, permissions: "private", name: "private list desc#{n}")
-          open_list = FactoryGirl.create(:list, permissions: "open", name: "open list desc#{n}")
+
+          users_private_list = FactoryGirl.create(:list, user: user, permissions: "private", name: "users private list desc#{n}")
           viewable_list = FactoryGirl.create(:list, permissions: "viewable", name: "viewable list desc#{n}")
-          private_ids << private_list.id
+          open_list = FactoryGirl.create(:list, permissions: "open", name: "open list desc#{n}")
+
+          private_ids << users_private_list.id
           view_ids << viewable_list.id
           open_ids << open_list.id
         end
 
         get :index, :user_id => user.id
-        expect(JSON.parse(response.body)).to eql(
-          {"lists" =>
+        expect(JSON.parse(response.body)["lists"]).to eql(
             [
-              {"id"=>private_ids[0], "name"=>"viewable list desc0"},
+              {"id"=>private_ids[0], "name"=>"users private list desc0"},
+              {"id"=>view_ids[0], "name"=>"viewable list desc0"},
+              {"id"=>open_ids[0], "name"=>"open list desc0"},
+              {"id"=>private_ids[1], "name"=>"users private list desc1"},
               {"id"=>view_ids[1], "name"=>"viewable list desc1"},
-              {"id"=>open_ids[2], "name"=>"viewable list desc2"}
+              {"id"=>open_ids[1], "name"=>"open list desc1"}
             ]
-          }
         )
       end
     end

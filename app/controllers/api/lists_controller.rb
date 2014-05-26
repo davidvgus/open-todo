@@ -7,14 +7,13 @@ class Api::ListsController < ApiController
   end
 
   def index
-    lists = List.where(permissions: "viewable")
 
     if params.has_key?(:user_id)
-      render json: {:test => "this is a test"}.to_json
+      lists = List.where("user_id = ? OR permissions = ? OR permissions = ?", params[:user_id], "open", "viewable").order("id ASC")
+      render json: lists, each_serializer: IndexListSerializer
     else
-      if lists
-        render json: lists, each_serializer: IndexListSerializer
-      end
+      lists = List.where(permissions: "viewable")
+      render json: lists, each_serializer: IndexListSerializer
     end
   end
 
