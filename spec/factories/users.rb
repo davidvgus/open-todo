@@ -2,7 +2,7 @@
 
 FactoryGirl.define do
   factory :user do
-    username "myusername"
+    username { Faker::Name.first_name }
     password "mypassword"
   end
 end
