@@ -2,7 +2,8 @@
 
 FactoryGirl.define do
   factory :list do
-    name "Shopping List"
+    user
+    name { Faker::Lorem.word }
     permissions "private"
   end
 end

@@ -46,12 +46,4 @@ class Api::UsersController < ApiController
     params.require(:user).permit(:username, :password)
   end
 
-  #def authenticated?
-    #authenticate_with_http_basic {|u, p| User.where( username: u, password: p).present? }
-  #end
-
-  #def check_auth
-    #return permission_denied_error unless authenticated?
-  #end
-
 end

@@ -2,8 +2,8 @@
 
 FactoryGirl.define do
   factory :item do
-    list_id 1
-    description "MyString"
+    list
+    description { Faker::Lorem.sentence(2) }
     completed false
   end
 end

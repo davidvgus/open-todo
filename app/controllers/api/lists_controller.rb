@@ -1,37 +1,22 @@
 class Api::ListsController < ApiController
-  before_action :set_user
-  before_action :set_list, only: [:show, :edit, :update, :destroy]
+  before_action :set_user, only: [:edit, :update, :destroy]
+  before_action :set_list, only: [:edit, :update, :destroy]
+  before_action :check_auth
 
   def show
-    @items = @list.items.completed
   end
 
   def index
-    @lists = @user.lists
+    render json: {bleh: "boo"}.to_json
   end
 
   def create
-    @list = List.new(list_params)
-    @list.user_id = @user.id
-
-    if @list.save
-      redirect_to user_list_path(@user, @list), notice: 'List was successfully created.'
-    else
-      render action: 'new'
-    end
   end
 
   def update
-    if @list.update(list_params)
-      redirect_to user_list_path(@user, @list), notice: 'List was successfully updated.'
-    else
-      render action: 'edit'
-    end
   end
 
   def destroy
-    @list.destroy
-    redirect_to @user
   end
 
   private
