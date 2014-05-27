@@ -1,19 +1,20 @@
 class Api::ItemsController < ApiController
   before_action :set_item, only: [:show, :update, :destroy]
   before_action :set_list
+  before_action :check_auth
 
   def create
-
     if @list.add(item_params[:description])
-      redirect_to user_list_path(@list.user, @list), notice: 'Item was successfully created.'
+      item = Item.where(:list_id => @list.id, :description => item_params[:description]).first
+      render json: ItemSerializer.new(item).to_json
     else
-      render action: 'new'
+      error(422, "item could not be created")
     end
   end
 
   def destroy
     @item.mark_complete
-    redirect_to user_list_path(@list.user, @list)
+    render json: ItemSerializer.new(@item).to_json
   end
 
   private
