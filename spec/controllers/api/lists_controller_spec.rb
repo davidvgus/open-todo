@@ -72,6 +72,10 @@ describe Api::ListsController do
         json = { :user_id => list.user.id, :format => 'json', :id => list.id, :list => {:permissions => "seekrit"} }
         put :update, json
         expect(response.status).to eql 422
+        expect(JSON.parse(response.body)).to eql( {
+          "response_type"=>"ERROR",
+          "message"=>"Wrong permissions type"
+        })
       end
 
     end
