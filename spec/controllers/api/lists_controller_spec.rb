@@ -7,19 +7,110 @@ describe Api::ListsController do
   end
 
   describe "create" do
-
-    xit "requires authentication" do
-      user = FactoryGirl.create(:user)
-      post :create, user_id: user.id
-      expect(response.status).to eql 403 # forbidden
+    context "without authentication" do
+      it "requires authentication" do
+        user = FactoryGirl.create(:user)
+        json = { :user_id => user.id, :format => 'json', :list => { :name => "foo" } }
+        post :create, json
+        expect(response.status).to eql 403 # forbidden
+      end
     end
 
-    context "with correct user's password" do
-      xit "takes a list name, creates it if it doesn't exist, and returns false if it does"
+    context "with authentication" do
+      before do
+        with_authentication
+      end
+
+      it "takes a list name, creates it if it doesn't exist, and returns error if it does" do
+        user = FactoryGirl.create(:user)
+        json = { :user_id => user.id, :format => 'json', :list => { :name => "New todo name" } }
+        post :create, json
+        expect(response.status).to eql 200
+      end
+
+      it "fails if duplicat name is assigned" do
+        user = FactoryGirl.create(:user)
+        FactoryGirl.create(:list, user: user, name: "New todo name")
+        json = { :user_id => user.id, :format => 'json', :list => { :name => "New todo name" } }
+        post :create, json
+        expect(response.status).to eql 500
+      end
+
+    end
+  end
+
+  describe "update" do
+    context "without authentication" do
+      it "requires authentication" do
+        list = FactoryGirl.create(:list)
+        json = { :user_id => list.user.id, :format => 'json', :id => list.id, :list => { :name => "foo" } }
+        put :update, json
+        expect(response.status).to eql 403 # forbidden
+      end
     end
 
-    context "without correct user's password" do
-      xit "it errors"
+    context "with authentication" do
+      before do
+        with_authentication
+      end
+
+      it "updates list name" do
+        list = FactoryGirl.create(:list, :name => "initial name for list")
+        new_name = "New name from spec"
+        json = { :user_id => list.user.id, :format => 'json', :id => list.id, :list => { :name => new_name } }
+        put :update, json
+        expect(response.status).to eql 200
+        expect(JSON.parse(response.body)["updated_list"]).to eql( {
+          "id" => list.id,
+          "name" => new_name,
+          "permissions" => "private"
+        })
+      end
+
+      it "fails if unsupported permission is assigned" do
+        list = FactoryGirl.create(:list)
+        json = { :user_id => list.user.id, :format => 'json', :id => list.id, :list => {:permissions => "seekrit"} }
+        put :update, json
+        expect(response.status).to eql 422
+      end
+
+    end
+  end
+
+  describe "destroy" do
+    context "without authentication" do
+      it "fails to delete and returns error" do
+        list = FactoryGirl.create(:list)
+        user = list.user
+        json = { :user_id => user.id, :id => list.id }
+        delete :destroy, json
+        expect(response.status).to eql 403 # forbidden
+        expect(List.exists?(list.id)).to eql true
+      end
+    end
+
+    context "with authentication" do
+      before do
+        with_authentication
+      end
+
+      it "deletes and returns list" do
+        list = FactoryGirl.create(:list, :name => "List Name")
+        user = list.user
+        user.update_attributes(:username => "SamwiseGamgee")
+        json = { :user_id => user.id, :id => list.id }
+        delete :destroy, json
+        expect(response.status).to eql 200
+        expect(List.exists?(list.id)).to eql false
+
+        expect(JSON.parse(response.body)).to eql(
+          "list" =>{
+            "id"=>list.id,
+            "name"=>"List Name",
+            "user_id"=>user.id,
+            "user_name"=>"SamwiseGamgee"}
+        )
+      end
     end
   end
 
