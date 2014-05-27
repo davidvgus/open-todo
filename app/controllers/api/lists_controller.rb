@@ -1,9 +1,11 @@
 class Api::ListsController < ApiController
   before_action :set_user, only: [:create,:update, :destroy]
-  before_action :set_list, only: [:update, :destroy]
+  before_action :set_list, only: [:show, :update, :destroy]
   before_action :check_auth
 
   def show
+    items = @list.items
+    render json: items, each_serializer: ItemSerializer
   end
 
   def index

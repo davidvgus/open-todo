@@ -3,7 +3,7 @@ require 'spec_helper'
 describe List do
 
   let(:list) { FactoryGirl.create(:list) }
-  
+
   describe "add" do
     it "adds the description to the item list" do
       expect{ list.add("New Item") }
@@ -23,7 +23,9 @@ describe List do
     end
 
     it "returns false if nothing's there" do
-      list.remove("Not There").should be_false
+      #list.remove("Not There").should be_false
+
+      expect(list.remove("Not There")).to eql false
     end
   end
 end

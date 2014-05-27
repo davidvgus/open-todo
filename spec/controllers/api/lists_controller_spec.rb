@@ -39,6 +39,55 @@ describe Api::ListsController do
     end
   end
 
+  describe "show" do
+    context "without authentication" do
+      it "fails" do
+        list = FactoryGirl.create(:list)
+        3.times do |n|
+          FactoryGirl.create(:item,
+                             :list => list,
+                             :description => "item #{n}")
+        end
+
+        json = {:user_id => list.user.id, :id => list.id, :format => :json}
+        get :show, json
+
+        expect(response.status).to eql 403 # forbidden
+        expect(JSON.parse(response.body)).to eql( {
+          "response_type"=>"ERROR",
+          "message"=>"Permission Denied!"
+        })
+      end
+    end
+
+    context "with authentication" do
+      before do
+        with_authentication
+      end
+
+      it "returns the correct list of items" do
+        list = FactoryGirl.create(:list)
+        item_list = []
+        3.times do |n|
+          item_list << FactoryGirl.create(:item, :list => list,
+                             :description => "item #{n}")
+        end
+
+        json = {:user_id => list.user.id, :id => list.id, :format => :json}
+        get :show, json
+
+        expect(response.status).to eql 200
+        expect(JSON.parse(response.body)["lists"]).to eql(
+          [
+            {"id"=> item_list[0].id, "description"=>"item 0", "completed"=>false},
+            {"id"=> item_list[1].id, "description"=>"item 1", "completed"=>false},
+            {"id"=> item_list[2].id, "description"=>"item 2", "completed"=>false}
+          ]
+        )
+      end
+    end
+  end
+
   describe "update" do
     context "without authentication" do
       it "requires authentication" do
