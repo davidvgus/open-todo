@@ -1,6 +1,7 @@
 class Api::UsersController < ApiController
   before_action :set_user, only: [:show, :update, :destroy]
   before_action :check_auth
+  before_filter :set_default_response_format
 
   def index
     users = User.all
@@ -32,6 +33,8 @@ class Api::UsersController < ApiController
   end
 
   def destroy
+    return error(404, "Could not destroy") if User.where(:id => params[:id]).empty?
+
     @user.destroy
     render json: DeletedUserSerializer.new(@user).to_json
   end
@@ -39,11 +42,16 @@ class Api::UsersController < ApiController
   private
 
   def set_user
-    @user = User.find(params[:id])
+    #@user = User.find(params[:id])
+    @user = User.where(:id => params[:id]).first
   end
 
   def user_params
     params.require(:user).permit(:username, :password)
+  end
+
+  def set_default_response_format
+    request.format = :json
   end
 
 end
